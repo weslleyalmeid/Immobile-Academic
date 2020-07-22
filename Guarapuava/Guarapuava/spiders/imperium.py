@@ -4,9 +4,23 @@ import scrapy
 class ImperiumSpider(scrapy.Spider):
     name = 'imperium'
 
-    start_urls = ['https://www.imperiumimoveis.com.br/busca?operacao=locacao&tipo-\
+    def start_requests(self):
+        url = ['https://www.imperiumimoveis.com.br/busca?operacao=locacao&tipo-\
     imovel=6&cidade=45&bairro=&valor-min=&valor-max=&area-min=&area-max=&garagens=&dormitorios=']
-    
+        formdata={
+            'operacao': 'locacao',
+            'tipo-imovel': '6',
+            'cidade': '45',
+            'bairro': '',
+            'valor-min': '',
+            'valor-max': '',
+            'area-min': '',
+            'area-max': '',
+            'garagens': '',
+            'dormitorios': '',
+            'page': '2'
+        }
+        yield scrapy.FormRequest(url, callback=self.parse, formdata=formdata, method='POST')
 
     def parse(self, response):
         # items = response.xpath('//div[@class="info hidden-xs"]/a[@class="detalhe-link"]')
@@ -21,7 +35,7 @@ class ImperiumSpider(scrapy.Spider):
 
             url = f'https://www.imperiumimoveis.com.br{next_page.extract_first()}'
             self.log(' ########################## MUDOU ###############################')
-            yield scrapy.Request(url, callback=self.parse, headers= headers, dont_filter=False)
+            yield scrapy.Request(url, callback=self.parse, dont_filter=False)
 
 
     def parse_detail(self, response):
