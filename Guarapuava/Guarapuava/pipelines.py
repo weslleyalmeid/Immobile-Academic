@@ -58,49 +58,49 @@ class GuarapuavaPipeline:
             if item['comodos']:
                 item['comodos'] = int(item['comodos'].strip())
 
-            # tables = 'cidade, bairro, comodos, garagem, suites, quartos, metragem, banheiro, preco'
-            # values = ':cidade, :bairro, :comodos, :garagem, :suites, :quartos, :metragem, :banheiro, :preco'
-            # insert = f'insert into imobiliaria({tables}) values ({values})'
+            tables = 'cidade, bairro, comodos, garagem, suites, quartos, metragem, banheiro, preco'
+            values = ':cidade, :bairro, :comodos, :garagem, :suites, :quartos, :metragem, :banheiro, :preco'
+            insert = f'insert into imobiliaria({tables}) values ({values})'
 
-            # self.conn.execute(insert, item)
-            # self.conn.commit()
+            self.conn.execute(insert, item)
+            self.conn.commit()
 
             return item
 
-    # def create_table(self):
-    #     result = self.conn.execute(
-    #         'select name from sqlite_master where type = "table" and name = "imobiliaria"'
-    #     )
+    def create_table(self):
+        result = self.conn.execute(
+            'select name from sqlite_master where type = "table" and name = "imobiliaria"'
+        )
 
-    #     try:
-    #         value = next(result)
+        try:
+            value = next(result)
 
-    #     except StopIteration as ex:
-    #         create_table = """
-    #             create table imobiliaria(id integer primary key,
-    #             cidade text,
-    #             bairro text,
-    #             comodos int,
-    #             garagem int,
-    #             suites int,
-    #             quartos text,
-    #             metragem text,
-    #             banheiro text,
-    #             preco text
-    #             )
-    #         """.replace('\n', '')
+        except StopIteration as ex:
+            create_table = """
+                create table imobiliaria(id integer primary key,
+                cidade text,
+                bairro text,
+                comodos int,
+                garagem int,
+                suites int,
+                quartos text,
+                metragem text,
+                banheiro text,
+                preco text
+                )
+            """.replace('\n', '')
 
-    #         self.conn.execute(create_table)
+            self.conn.execute(create_table)
 
-    # def open_spider(self, spider):
-    #     # criar bando de dados e se conectar
-    #     CURRENT_DIR = os.path.abspath('')
-    #     ROOT_DIR = os.path.dirname(CURRENT_DIR)
-    #     DATA_DIR = os.path.join(ROOT_DIR, 'data')
-    #     BASE = os.path.join(DATA_DIR, 'database.db')
-    #     self.conn = sqlite3.connect(BASE)
-    #     self.create_table()
+    def open_spider(self, spider):
+        # criar bando de dados e se conectar
+        CURRENT_DIR = os.path.abspath('')
+        ROOT_DIR = os.path.dirname(CURRENT_DIR)
+        DATA_DIR = os.path.join(ROOT_DIR, 'data')
+        BASE = os.path.join(DATA_DIR, 'database.db')
+        self.conn = sqlite3.connect(BASE)
+        self.create_table()
 
-    # def close_spider(self, spider):
-    #     # fechando o banco de dados
-    #     self.conn.close()
+    def close_spider(self, spider):
+        # fechando o banco de dados
+        self.conn.close()

@@ -6,8 +6,10 @@ class ImperiumSpider(scrapy.Spider):
 
     def start_requests(self):
         url = ['https://www.imperiumimoveis.com.br/busca?operacao=locacao&tipo-\
-    imovel=6&cidade=45&bairro=&valor-min=&valor-max=&area-min=&area-max=&garagens=&dormitorios=']
-        formdata={
+    imovel=6&cidade=45&bairro=&valor-min=&valor-max=&area-min=&area-max=&garagens=&dormitorios=',
+        'https://www.imperiumimoveis.com.br/busca?operacao=locacao&tipo-\
+            imovel=55&cidade=45&bairro=&valor-min=&valor-max=&area-min=&area-max=&garagens=&dormitorios=']
+        formdata_apto ={
             'operacao': 'locacao',
             'tipo-imovel': '6',
             'cidade': '45',
@@ -17,18 +19,35 @@ class ImperiumSpider(scrapy.Spider):
             'area-min': '',
             'area-max': '',
             'garagens': '',
-            'dormitorios': '',
-            'page': '2'
+            'dormitorios': ''
         }
-        yield scrapy.FormRequest(url, callback=self.parse, formdata=formdata, method='POST')
+
+        formdata_casa = {
+            'operacao': 'locacao',
+            'tipo-imovel': '55',
+            'cidade': '45',
+            'bairro': '',
+            'valor-min': '',
+            'valor-max': '',
+            'area-min': '',
+            'area-max': '',
+            'garagens': '',
+            'dormitorios': ''
+        }
+        items = {}
+        items.update(pos1 = [url[0], formdata_apto])
+        items.update(pos2 = [url[1], formdata_casa])
+
+        for item in items:
+            yield scrapy.FormRequest(url=items[item][0], callback=self.parse, formdata=items[item][1], method='GET')
 
     def parse(self, response):
-        # items = response.xpath('//div[@class="info hidden-xs"]/a[@class="detalhe-link"]')
+        items = response.xpath('//div[@class="info hidden-xs"]/a[@class="detalhe-link"]')
 
-        # for item in items:
-        #     url = item.xpath('./@href').get()
-        #     # self.log(url)
-        #     yield scrapy.Request(url= url, callback= self.parse_detail)
+        for item in items:
+            url = item.xpath('./@href').get()
+            # self.log(url)
+            yield scrapy.Request(url= url, callback= self.parse_detail)
 
         next_page = response.xpath('//a[@rel="next"]/@href')
         if next_page:
