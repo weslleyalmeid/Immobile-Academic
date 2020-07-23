@@ -94,6 +94,55 @@ def start_requests(self):
 
 ```
 
+#### Start requests completo:
+```py
+
+    def start_requests(self):
+        
+        url = 'https://www.jlo.com/todos/todos/1'
+
+        # headers disponíveis no network
+        headers = {
+            'Accept': 'text/html,aation/signed-exchange;v=b3;q=9',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+            'Cache-Control': 'max-age=0',
+            'Connection': 'keep-alive',
+            'Content-Length': '77',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Cookie': '__utmc=226286; __utmz=226LNAD',
+            'Host': 'www.jlosso.com.br',
+            'Origin': 'https://www.jlosso.com.br',
+            'Referer': 'https://www.jlosso.com.br/home',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'same-origin',
+            'Sec-Fetch-User': '?1',
+            'Upgrade-Insecure-Requests': '1'
+        }
+
+        # form de request
+        form_data = {
+            'cat1': '2.locacao',
+            'cat3': '4.carros',
+            'valormedio': '',
+            'codigo': '',
+            'cidade': '5166.pato'
+        }
+        
+        # desativa o robots.txt
+        meta = {'dont_obey_robotstxt':'False'}
+
+        yield scrapy.FormRequest(
+                        url=url,
+                        callback=self.parse,
+                        formdata=form_data,
+                        method='POST',
+                        headers= headers,
+                        meta= meta
+                    )
+```
+
 ####  FormResquest Shell
 exemplo básico de funcionamento:
 ~~~shell
