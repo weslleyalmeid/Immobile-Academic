@@ -128,19 +128,19 @@ class GuarapuavaPipeline:
             else:
                 item['garagem'] = 0
             
+
             if item['suites']:
                 item['suites'] = int(item['suites'].strip())
+            else:
+                item['suites'] = 0
 
-            try:
+
+            if item['quartos']:
                 item['quartos'] = int(item['quartos'].strip())
-            except:
-                item['quartos'] = None
 
 
             if item['metragem']:
-                item['metragem'] = re.search(r'[1-9]\d*(,\d+)?', item['metragem']).group()
                 item['metragem'] = float(item['metragem'].replace(',', '.'))
-
 
 
             if item['banheiro']:
@@ -153,12 +153,12 @@ class GuarapuavaPipeline:
                 item['preco'] = item['preco'].replace('.', '').replace(',', '.')
                 item['preco'] = float(re.search(r'[1-9](\d+)?(.\d+)?',  item['preco']).group())
 
-            # tables = 'cidade, bairro, comodos, garagem, suites, quartos, metragem, banheiro, preco'
-            # values = ':cidade, :bairro, :comodos, :garagem, :suites, :quartos, :metragem, :banheiro, :preco'
-            # insert = f'insert into imobiliaria({tables}) values ({values})'
+            tables = 'cidade, bairro, comodos, garagem, suites, quartos, metragem, banheiro, preco'
+            values = ':cidade, :bairro, :comodos, :garagem, :suites, :quartos, :metragem, :banheiro, :preco'
+            insert = f'insert into imobiliaria({tables}) values ({values})'
 
-            # self.conn.execute(insert, item)
-            # self.conn.commit()
+            self.conn.execute(insert, item)
+            self.conn.commit()
             
             return item
         
