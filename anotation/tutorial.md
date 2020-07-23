@@ -80,6 +80,20 @@ def start_requests(self):
     yield FormRequest(url, callback=self.parse, formdata=formdata, method='POST')
 ```
 
+#### Alterar o robots.txt na class Spider:
+```py
+    def start_requests(self):
+        
+        url = 'https://www.almeidaw.com.br'
+        form_data = {
+            'cat1': '2.locacao',
+        }
+        # comando que subscreve ROBOTSTXT_OBEY do settings
+        meta = {'dont_obey_robotstxt':'False'}
+        yield scrapy.FormRequest(url=url, callback=self.parse, formdata=form_data ,method='POST', meta= meta)
+
+```
+
 ####  FormResquest Shell
 exemplo básico de funcionamento:
 ~~~shell
@@ -117,3 +131,23 @@ fetch(scrapy.FormRequest(url, formdata=formdata, method='POST'))
 #### Scrapy command line - List spiders
 
     scrapy list
+
+#### Lista de pseudo-classes
+
+**Irmão anterior**
+        
+    preceding-sibling::tag
+
+**Irmão posterior**
+    
+    following-sibling::tag
+
+**Pai**
+   
+    parent::tag
+
+**Obter text dentro da tag css**
+
+    response.css('mytag::text') -> Obter texto apenas do nó selecionado.
+    response.css('mytag ::text') -> Obter texto do nó selecionado e seus nós filhos.
+
