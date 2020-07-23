@@ -67,6 +67,101 @@ class GuarapuavaPipeline:
 
             return item
 
+        if spider.name == 'faax':
+            spider.log(f'####################### {spider.name} #######################')
+
+            try:
+                item['bairro'] = re.search(r'BAIRRO .* -', item['bairro']).group()
+                item['bairro'] = item['bairro'].split()[1]
+            except:
+                try:
+                    item['bairro'] = list(re.finditer(r'- \w+( .*)?', bairro))[1].group()
+                except:
+                    item['bairro'] = None
+
+            if item['garagem']:
+                item['garagem'] = int(item['garagem'])
+            else:
+                item['garagem'] = 0
+            
+            if item['suites']:
+                item['suites'] = int(item['suites'].strip())
+
+            try:
+                item['quartos'] = int(item['quartos'].strip())
+            except:
+                item['quartos'] = None
+
+
+            if item['metragem']:
+                item['metragem'] = re.search(r'[1-9]\d*(,\d+)?', item['metragem']).group()
+                item['metragem'] = float(item['metragem'].replace(',', '.'))
+
+
+            if item['banheiro']:
+                item['banheiro'] = int(item['banheiro'].strip())
+            else:
+                item['banheiro'] = 1
+
+
+            if item['preco']:
+                item['preco'] = item['preco'].replace('.', '').replace(',', '.')
+                item['preco'] = float(re.search(r'[1-9](\d+)?(.\d+)?',  item['preco']).group())
+
+            tables = 'cidade, bairro, comodos, garagem, suites, quartos, metragem, banheiro, preco'
+            values = ':cidade, :bairro, :comodos, :garagem, :suites, :quartos, :metragem, :banheiro, :preco'
+            insert = f'insert into imobiliaria({tables}) values ({values})'
+
+            self.conn.execute(insert, item)
+            self.conn.commit()
+            
+            return item
+
+        if spider.name == 'jlosso':
+            spider.log(f'####################### {spider.name} #######################')
+
+            if item['bairro']:
+                item['bairro'] = item['bairro'].strip()
+
+            if item['garagem']:
+                item['garagem'] = int(item['garagem'])
+            else:
+                item['garagem'] = 0
+            
+            if item['suites']:
+                item['suites'] = int(item['suites'].strip())
+
+            try:
+                item['quartos'] = int(item['quartos'].strip())
+            except:
+                item['quartos'] = None
+
+
+            if item['metragem']:
+                item['metragem'] = re.search(r'[1-9]\d*(,\d+)?', item['metragem']).group()
+                item['metragem'] = float(item['metragem'].replace(',', '.'))
+
+
+            if item['banheiro']:
+                item['banheiro'] = int(item['banheiro'].strip())
+            else:
+                item['banheiro'] = 1
+
+
+            if item['preco']:
+                item['preco'] = item['preco'].replace('.', '').replace(',', '.')
+                item['preco'] = float(re.search(r'[1-9](\d+)?(.\d+)?',  item['preco']).group())
+
+            # tables = 'cidade, bairro, comodos, garagem, suites, quartos, metragem, banheiro, preco'
+            # values = ':cidade, :bairro, :comodos, :garagem, :suites, :quartos, :metragem, :banheiro, :preco'
+            # insert = f'insert into imobiliaria({tables}) values ({values})'
+
+            # self.conn.execute(insert, item)
+            # self.conn.commit()
+            
+            return item
+        
+
     def create_table(self):
         result = self.conn.execute(
             'select name from sqlite_master where type = "table" and name = "imobiliaria"'

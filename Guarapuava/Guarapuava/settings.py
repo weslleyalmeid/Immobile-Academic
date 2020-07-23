@@ -38,20 +38,6 @@ ROBOTSTXT_OBEY = True
 
 # Override the default request headers:
 # DEFAULT_REQUEST_HEADERS = {
-#    'Accept':' text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-#    'Accept-Encoding': 'gzip, deflate, br',
-#    'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
-#    'Cache-Control': 'no-cache',
-#    'Connection': 'keep-alive',
-#    'Cookie': '_ga=GA1.3.1192687174.1595243548; _gid=GA1.3.1019081631.1595243548; __atuvc=10%7C30; laravel_session=eyJpdiI6IkpMVEFHZk1pVlZxMlFvbU83UEpTeGc9PSIsInZhbHVlIjoiTDVcL2VjeDZTN2QxYnB2ejhQb1pyS3lzc1lrTDZDMTVGa2FxdGs4aVZQTU5XbWdpNHdTUDN6eXRjRnlRclNNK0xzOVpZXC8yYlE0VHVNV2FJRXhMOUVwdz09IiwibWFjIjoiZGNjZWVmNmQ2NTE5ODg1ODNiMzVlY2ZlNDM0ODZkMzE4MDkzOTA3NWY4Yzg5ZTEwN2E4N2FiMmE1Zjk4NzVmNyJ9; _gat=1; _gat_gtag_UA_9335925_96=1',
-#    'Host': 'www.imperiumimoveis.com.br',
-#    'Pragma': 'no-cache',
-#    'Sec-Fetch-Dest': 'document',
-#    'Sec-Fetch-Mode':'navigate',
-#    'Sec-Fetch-Site': ' none',
-#    'Sec-Fetch-User':' ?1',
-#    'Upgrade-Insecure-Requests':' 1',
-#    'User-Agent':' Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36'
 # }
 
 # Enable or disable spider middlewares
