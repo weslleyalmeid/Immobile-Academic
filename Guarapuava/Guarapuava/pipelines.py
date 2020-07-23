@@ -142,6 +142,7 @@ class GuarapuavaPipeline:
                 item['metragem'] = float(item['metragem'].replace(',', '.'))
 
 
+
             if item['banheiro']:
                 item['banheiro'] = int(item['banheiro'].strip())
             else:
