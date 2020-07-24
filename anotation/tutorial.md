@@ -154,6 +154,7 @@ url='http://imobiliariabelamorada.com.br/filtro/locacao/ \
     apartamentos/pato-branco-pr/?busca=1'
 ~~~
  
+**Passando form**
 ~~~shell
 formdata={
     'cat1': '2.locacao', 
@@ -168,9 +169,48 @@ formdata={
 fetch(scrapy.FormRequest(url, formdata=formdata, method='POST'))
 ~~~
 
+**Passando headers no shell**
+~~~shell
+scrapy shell -s USER_AGENT='custom user agent' 'http://www.example.com'
+scrapy shell -s ROBOTSTXT_OBEY='False' 'http://www.example.com'
+~~~
+ou
+~~~shell
+url = 'http://www.example.com'
+request = scrapy.Request(url, headers={'User-Agent': 'Mybot'})
+fetch(request)
+~~~
+
+#### Execuntando scrapy em html localhost
+
+**Shell**
+~~~shell
+    scrapy shell local/name/page
+~~~
+**Server local**
+1. Abra o terminal na pasta onde consta o arquivo .html
+    ~~~shell
+        python -m http.server <port>
+    ~~~
+    obs.: A porta default é a 8000, porém, você pode alterar inserindo outro número valor
+
+2. Vá até o local host e clique no arquivo.html
+
+3. Executando scrapy localhost
+    ~~~shell
+        scrapy shell http://0.0.0.0:8000/arquivo.html
+    ~~~
+    obs.: No caso de genspider
+    ~~~shell
+        scrapy genspider name localhost
+    ~~~
+
+
 #### Passar argumento category
 
+~~~shell
     scrapy crawl projeto -a category=nome_elemento
+~~~
 
 #### Ajustar o start_request
 
