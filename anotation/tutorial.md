@@ -18,23 +18,23 @@ class BlogSpider(scrapy.Spider):
 ```
 para executar o código
 
-    scrapy runspider my_project.py  
+    scrapy runspider my-project.py  
 
 ### 2- Iniciar um projeto
 
-    scrapy startproject nome_projeto 
+    scrapy startproject nome-projeto 
 
 ### 3 - Criar um Spider
 
-    scrapy genspider nome_class_spider url_project 
+    scrapy genspider nome-class-spider url-project 
 
 ### 4 - Executar o Scrapy modo projeto
 
-    scrapy crawl nome_class_spider 
+    scrapy crawl nome-class-spider 
 
 ### 5 - Executar e salvar o arquivo
 
-    scrapy crawl nome_class_spider -o arquivo.formato 
+    scrapy crawl nome-class-spider -o arquivo.formato 
 
 ### 6 - Comandos úteis
 
@@ -205,6 +205,18 @@ fetch(request)
         scrapy genspider name localhost
     ~~~
 
+#### DELAY no dowload das páginas
+Configurando o arquivo settings.py
+~~~py
+    # See also autothrottle settings and docs
+    DOWNLOAD_DELAY = 3
+~~~
+ou passando no sheel
+~~~shell
+    scrapy crawl name-spider -s DOWNLOAD_DELAY = Valor
+~~~
+Por padrão, o Scrapy não espera um período fixo de tempo entre solicitações, 
+mas usa um intervalo aleatório entre 0,5 * DOWNLOAD_DELAY e 1,5 * DOWNLOAD_DELAY.
 
 #### Passar argumento category
 
@@ -239,4 +251,5 @@ fetch(request)
 
     response.css('mytag::text') -> Obter texto apenas do nó selecionado.
     response.css('mytag ::text') -> Obter texto do nó selecionado e seus nós filhos.
+
 
