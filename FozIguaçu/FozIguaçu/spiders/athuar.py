@@ -1,107 +1,56 @@
 import scrapy
 from urllib.parse import urljoin
 
-
+""" 
+    Ao percorrer a lista de categorias, de alguma maneira o percorre todas as páginas
+    de forma paralela, como o url é o mesmo e só muda o form, de alguma maneira o response
+    não avança as páginas seguintes, avançando apenas em uma das categorias.
+    Como não consegui resolver, vou executar a extração mudando apenas os elementos categories
+"""
 CONT = 1
 class AthuarSpider(scrapy.Spider):
     name = 'athuar'
     # start_urls = ['http://www.athuarimoveis.com.br/resultado-busca.asp?busca=1#detalhes/']
 
-    # def start_requests(self):
-    #     # apto=4, casa=3, kitnet=27, sobrado=12
-    #     # categories = ['4', '3', '27', '12']
-    #     categories = ['4', '3']
-    #     # categories = ['4']
-    #     # categories = ['3']
-    #     # categories = ['27']
-    #     # categories = ['12']
-
-    #     for category in categories:
-    #         url='http://www.athuarimoveis.com.br/resultado-busca.asp?busca=1'
-    #         global CONT
-    #         CONT = 1
-    #         formdata ={
-    #             'cat1': '2',
-    #             'cat3': category,
-    #             'cidade': '5137',
-    #             'valor': '0',
-    #             'cod': ''
-    #         }
-    #         yield scrapy.FormRequest(url= url, callback=self.parse, formdata=formdata, method='POST')
-
     def start_requests(self):
         # apto=4, casa=3, kitnet=27, sobrado=12
         # categories = ['4', '3', '27', '12']
+        # categories = ['4']
+        # categories = ['3']
+        # categories = ['27']
+        categories = ['12']
 
-        url = [
-            'http://www.athuarimoveis.com.br/resultado-busca.asp?busca=1',
-            'http://www.athuarimoveis.com.br/resultado-busca.asp?busca=1',
-            'http://www.athuarimoveis.com.br/resultado-busca.asp?busca=1',
-            'http://www.athuarimoveis.com.br/resultado-busca.asp?busca=1'
-        ]
+        for category in categories:
+            url='http://www.athuarimoveis.com.br/resultado-busca.asp?busca=1'
 
-        apto ={
+            formdata ={
                 'cat1': '2',
-                'cat3': '4',
+                'cat3': category,
                 'cidade': '5137',
                 'valor': '0',
                 'cod': ''
             }
-
-        casa ={
-                'cat1': '2',
-                'cat3': '3',
-                'cidade': '5137',
-                'valor': '0',
-                'cod': ''
-            }
-
-        kit ={
-                'cat1': '2',
-                'cat3': '27',
-                'cidade': '5137',
-                'valor': '0',
-                'cod': ''
-            }
-
-        sob ={
-                'cat1': '2',
-                'cat3': '12',
-                'cidade': '5137',
-                'valor': '0',
-                'cod': ''
-            }
-
-        items = {}
-        items.update(pos1 = [url[0], apto])
-        items.update(pos2 = [url[1], casa])
-        items.update(pos3 = [url[2], kit])
-        items.update(pos4 = [url[3], sob])
-
-        for item in items:
-            global CONT
-            CONT = 1
-            yield scrapy.FormRequest(url=items[item][0], callback=self.parse, formdata=items[item][1], method='POST')
+            yield scrapy.FormRequest(url= url, callback=self.parse, formdata=formdata, method='POST')
 
     def parse(self, response):
+
+        self.log(f'\n\n\n ESSE CARALHO É DA PÁGINA {response.url}')
         items = response.xpath('//img[@class="image"]/parent::a')
 
         for item in items:
             url_item = item.xpath('./@href').extract_first()
-            self.log(f'############# {url_item} ##################')
-            # yield scrapy.Request(url=url_item, callback=self.parse_detail)
+            # self.log(f'############# {url_item} ##################')
+            yield scrapy.Request(url=url_item, callback=self.parse_detail)
 
-        # global CONT
-        # next_page = response.xpath(f'//a[@data-ix="passar-pagians"][contains(text(), "{CONT + 1}")]')
+        next_page = response.xpath(f'//a[@data-ix="passar-pagians"]/b/parent::a/following-sibling::a')
 
-        # if next_page:
-        #     relative_url = next_page.xpath('./@href').get()
-        #     base_url = 'http://www.athuarimoveis.com.br/'
-        #     next_url = urljoin(base_url, relative_url)
-        #     CONT += 1
-        #     yield scrapy.Request(url= next_url, callback= self.parse)
+        if next_page:
+            relative_url = next_page.xpath('./@href').get()
+            base_url = 'http://www.athuarimoveis.com.br/'
+            next_url = urljoin(base_url, relative_url)
+            yield scrapy.Request(url= next_url, callback= self.parse)
 
-        self.log('\n\n\n')
+        
     def parse_detail(self, response):
 
         cidade = 'Foz Do Iguacu'
