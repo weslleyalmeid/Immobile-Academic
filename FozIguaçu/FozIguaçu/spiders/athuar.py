@@ -34,7 +34,7 @@ class AthuarSpider(scrapy.Spider):
 
     def parse(self, response):
 
-        self.log(f'\n\n\n ESSE CARALHO É DA PÁGINA {response.url}')
+        # self.log(f'\n\n\n AQUI {response.url}')
         items = response.xpath('//img[@class="image"]/parent::a')
 
         for item in items:

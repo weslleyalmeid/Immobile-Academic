@@ -8,9 +8,7 @@ class SolSpider(scrapy.Spider):
 
     start_urls = ['https://www.solimoveis.com.br/aluguel/apartamento--casa--sobrado/foz-do-iguacu/todos-os-bairros/0-quartos/0-suite-ou-mais/0-vaga/0-banheiro-ou-mais?valorminimo=0&valormaximo=0&pagina={NUM}'.format(NUM=x) for x in range(1,6)]
     # import ipdb; ipdb.set_trace()
-
     
-
     def start_requests(self):
 
         for url in self.start_urls:
