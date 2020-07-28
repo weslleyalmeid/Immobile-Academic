@@ -172,13 +172,23 @@ fetch(scrapy.FormRequest(url, formdata=formdata, method='POST'))
 **Passando headers no shell**
 ~~~shell
 scrapy shell -s USER_AGENT='custom user agent' 'http://www.example.com'
-scrapy shell -s ROBOTSTXT_OBEY='False' 'http://www.example.com'
 ~~~
-ou
+ou dentro do ipython
 ~~~shell
 url = 'http://www.example.com'
 request = scrapy.Request(url, headers={'User-Agent': 'Mybot'})
 fetch(request)
+~~~
+
+**Desativando robots.txt pelo terminal**
+
+Shell
+~~~shell
+scrapy shell -s ROBOTSTXT_OBEY='False' 'http://www.example.com'
+~~~
+Crawl
+~~~shell
+scrapy crawl name-spider -s ROBOTSTXT_OBEY='False'
 ~~~
 
 #### Execuntando scrapy em html localhost
@@ -240,16 +250,101 @@ mas usa um intervalo aleatório entre 0,5 * DOWNLOAD_DELAY e 1,5 * DOWNLOAD_DELA
     preceding-sibling::tag
 
 **Irmão posterior**
-    
+*xpath*
+
     following-sibling::tag
+
+*css*
+
+    i.ga-bedrooms-02 + span
+
 
 **Pai**
    
     parent::tag
+
+**Pegar tag filha em css**
+
+    tag.class > child
+
+ou
+
+    tag.class  child
+
+**Pegar último filho em css**
+
+    tag:last-child
 
 **Obter text dentro da tag css**
 
     response.css('mytag::text') -> Obter texto apenas do nó selecionado.
     response.css('mytag ::text') -> Obter texto do nó selecionado e seus nós filhos.
 
+**Pegar atributo href**
 
+    tag::attr(href)
+
+**Pegar último elemento selecionado [last()]**
+
+    response.xpath('//div[@class="row"]/text() [last()]').get()
+
+
+#### Scrapy mais Splash
+
+**Instalar e configurar o splash**
+[github splash](https://github.com/scrapy-plugins/scrapy-splash)
+
+
+**Instalar**
+~~~shell
+    pip install scrapy-splash
+~~~
+
+**Executar docker**
+~~~shell
+    docker run -p 8050:8050 scrapinghub/splash
+~~~
+
+**colocar em settings do spider**
+~~~py
+SPLASH_URL = 'http://localhost:8050/'
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy_splash.SplashCookiesMiddleware': 723,
+    'scrapy_splash.SplashMiddleware': 725,
+    'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
+}
+SPIDER_MIDDLEWARES = {
+    'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
+}
+DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
+HTTPCACHE_STORAGE = 'scrapy_splash.SplashAwareFSCacheStorage'
+ ~~~
+
+**Exemplo de request com splash**
+ ~~~py
+from scrapy_splash import SplashRequest
+
+def start_requests(self):
+    for url in self.start_urls:
+        yield SplashRequest(
+            url= url,
+            callback= self.parse,
+            endpoint='render.html',
+            args={'wait': 10}
+        )
+ ~~~
+
+
+ #### Interpretando robots.txt
+ [Guia robots.txt](https://searchengineland.com/a-deeper-look-at-robotstxt-17573#:~:text=The%20hash%20symbol%20(%23)%20may,lines%20or%20end%20of%20lines.)
+
+ **Básico**
+    
+    User-agent: * [para todo bot]
+    Disallow: / [bloquear o site inteiro]
+
+    User-agent: * [para todo bot]
+    Disallow: /dir/ [bloquear diretório específico]
+
+    User-agent: Fetch [para o bot fetch]
+    Disallow: /private.html [bloquear página específica]
