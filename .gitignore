@@ -5,6 +5,7 @@
 ### Local ###
 .vscode/
 data/
+*.ods
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
