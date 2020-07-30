@@ -1,4 +1,4 @@
-#Curso de Scrapy
+#Ebook de Scrapy
 
 ### 1 - Intro Scrapy
 
@@ -292,7 +292,7 @@ ou
 #### Scrapy mais Splash
 
 **Instalar e configurar o splash**
-[github splash](https://github.com/scrapy-plugins/scrapy-splash)
+[github scrapy-splash](https://github.com/scrapy-plugins/scrapy-splash)
 
 
 **Instalar**
@@ -332,6 +332,41 @@ def start_requests(self):
             endpoint='render.html',
             args={'wait': 10}
         )
+ ~~~
+
+ #### Scrapy mais Selenium
+
+**Instalar e configurar o splash**
+[github scrapy-selenium](https://github.com/clemfromspace/scrapy-selenium)
+
+
+**Instalar**
+~~~shell
+    pip install scrapy-selenium
+~~~
+
+**colocar em settings do spider**
+~~~py
+from shutil import which
+
+SELENIUM_DRIVER_NAME = 'firefox'
+SELENIUM_DRIVER_EXECUTABLE_PATH = which('geckodriver')
+SELENIUM_DRIVER_ARGUMENTS=['-headless']  # '--headless' if using chrome instead of firefox
+SELENIUM_BROWSER_EXECUTABLE_PATH = which('firefox')
+
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy_selenium.SeleniumMiddleware': 800
+}
+ ~~~
+
+**Exemplo de request com splash**
+ ~~~py
+from scrapy_selenium import SeleniumRequest
+
+
+    def start_requests(self):
+        url = self.start_urls[0]
+        yield SeleniumRequest(url=url, callback=self.parse, wait_time= 3)
  ~~~
 
 
