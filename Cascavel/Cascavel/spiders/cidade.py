@@ -1,80 +1,60 @@
-# -*- coding: utf-8 -*-
 import scrapy
-from scrapy.selector import Selector
-from selenium.webdriver import Firefox
-from time import sleep
-from selenium.webdriver.firefox.options import Options
-
+from scrapy_selenium import SeleniumRequest
+from urllib.parse import urljoin
+import re
 
 class CidadeSpider(scrapy.Spider):
     name = 'cidade'
+    start_urls = ['https://www.imobiliariacidade.com.br/imoveis/apartamento-casa-residencial-sobrado-locacao-cascavel-pagina-1']
 
-    start_urls = ['http://https://www.imobiliariacidade.com.bra/imoveis/apartamento-casa-residencial-sobrado-locacao-cascavel-pagina-1/']
-    page = []
-
-    def __init__(self):
-        options = Options()
-        options.headless = True
-        self.driver = Firefox(options= options)
-
+    def start_requests(self):
+        url = self.start_urls[0]
+        yield SeleniumRequest(url=url, callback=self.parse, wait_time= 3)
 
     def parse(self, response):
-
-        self.driver.get(response.url)
-
-        response = Selector(text=self.driver.page_source.encode('utf-8'))
         
-        page = response.xpath('//div[@class="pagination__pages"]/a/@href').extract()
+        items = response.css('a.list__item')
 
-        while page:
+        for item in items:
+            self.log('################# OBTENDO ITEMS ########################')
+            relative_url = item.css('a::attr(href)').get()
+            base_url = 'https://www.imobiliariacidade.com.br'
+            url = urljoin(base_url, relative_url)
+            yield SeleniumRequest(
+                        url=url,
+                        callback=self.parse_detail,
+                        wait_time=2
+                    )
 
-            self.driver.get(page[0])
-            sleep(3)
-            items = self.driver.find_elements_by_xpath('//a[@class="mask"]')
+        relative_url = response.css('a.list__next-btn::attr(href)').get()
+        base_url = 'https://www.imobiliariacidade.com.br'
+        next_page = urljoin(base_url, relative_url)
+        if next_page:
+            aux = int(re.search(r'\d+', next_page).group())
+            if aux < 20:
+                yield SeleniumRequest(url=next_page, callback=self.parse, wait_time= 3)
 
-            urls = []
-            for item in items:
-                self.log(
-                    '########################## OBTENDO ITEMS #################################')
-                url = item.get_attribute('href')
-                urls.append(url)
 
-            for url in urls:
-                self.log(
-                    '########################## ACESSANDO URLS #################################')
-                self.driver.get(url)
-                sleep(3)
-                response = Selector(text=self.driver.page_source.encode('utf-8'))
+    def parse_detail(self, response):
 
-                cidade = 'Francisco Beltrao'
-                bairro = response.xpath(
-                    '//ul[@class="habitation__specs-list"]/li[contains(text(), "Bairro")]/text()').extract_first()
-                comodos = response.xpath(
-                    '//strong[text()="Cômodos:"]/parent::div/text()').extract_first()
-                garagem = response.xpath(
-                    '//p/strong[contains(text(), "Observa")]/parent::p/text()')[-1].get()
-                suites = response.xpath(
-                    '//li[contains(text(), "Suite")]/text()').extract_first()
-                quartos = response.xpath(
-                    '//li[contains(text(), "dormito")]/text()').extract_first()
-                metragem = response.xpath(
-                    '//li[contains(text(), "Metragem")]/text()').extract_first()
-                banheiro = response.xpath(
-                    '//li[contains(text(), "Wc")]/text()').extract_first()
-                preco = response.xpath(
-                    '//li[@class="is-featured"]/text()').extract_first()
-
-                yield{
-                    'cidade': cidade,
-                    'bairro': bairro,
-                    'comodos': comodos,
-                    'garagem': garagem,
-                    'suites': suites,
-                    'quartos': quartos,
-                    'metragem': metragem,
-                    'banheiro': banheiro,
-                    'preco': preco
-                }
-
-            self.log('&&&&&&&&&&&&&&&&&&&&&&&&&&& mudou de página &&&&&&&&&&&&&&&&&&&&&&&&&')
-            page.pop(0)
+        cidade = 'Cascavel'
+        bairro = response.css('div.ficha__adress::text').get()
+        comodos = ''
+        garagem = response.xpath('//span[contains(.,"vagas")]/text()').get()
+        suites = response.xpath('//span[contains(.,"suite")]/text()').get()
+        quartos = response.xpath('//span[contains(.,"quarto")]/text()').get()
+        metragem = response.xpath('//span[contains(.,"útil" ) or contains(., "total")]/text()').get()
+        banheiro = response.xpath('//div[@class="jetgrid"]//div[contains(text(),"BWC" )]/following-sibling::div/text()').get()
+        preco = response.css('div.ficha__valor-numero::text').get()
+        
+        yield {
+            'cidade': cidade,
+            'bairro': bairro,
+            'comodos': comodos,
+            'garagem': garagem,
+            'suites': suites,
+            'quartos': quartos,
+            'metragem': metragem,
+            'banheiro': banheiro,
+            'preco': preco
+        }

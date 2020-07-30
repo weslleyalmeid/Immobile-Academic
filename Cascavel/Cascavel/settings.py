@@ -19,6 +19,20 @@ NEWSPIDER_MODULE = 'Cascavel.spiders'
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
 
+# ? ---------------- Splash settings - Configuração do Selenium -----------------
+from shutil import which
+
+SELENIUM_DRIVER_NAME = 'firefox'
+SELENIUM_DRIVER_EXECUTABLE_PATH = which('geckodriver')
+SELENIUM_DRIVER_ARGUMENTS=['-headless']  # '--headless' if using chrome instead of firefox
+SELENIUM_BROWSER_EXECUTABLE_PATH = which('firefox')
+
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy_selenium.SeleniumMiddleware': 800
+}
+
+# ?----------------------------------------------------------------------------
+
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
 
@@ -62,9 +76,9 @@ ROBOTSTXT_OBEY = True
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    'Cascavel.pipelines.CascavelPipeline': 300,
-#}
+ITEM_PIPELINES = {
+   'Cascavel.pipelines.CascavelPipeline': 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
