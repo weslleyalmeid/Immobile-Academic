@@ -19,7 +19,7 @@ NEWSPIDER_MODULE = 'Cascavel.spiders'
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
 
-# ? ---------------- Splash settings - Configuração do Selenium -----------------
+# ? ---------------- Selenium settings - Configuração do Selenium -----------------
 from shutil import which
 
 SELENIUM_DRIVER_NAME = 'firefox'
