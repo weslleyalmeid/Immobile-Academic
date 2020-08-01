@@ -19,20 +19,6 @@ NEWSPIDER_MODULE = 'Cascavel.spiders'
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
 
-# ? ---------------- Selenium settings - Configuração do Selenium -----------------
-from shutil import which
-
-SELENIUM_DRIVER_NAME = 'firefox'
-SELENIUM_DRIVER_EXECUTABLE_PATH = which('geckodriver')
-SELENIUM_DRIVER_ARGUMENTS=['-headless']  # '--headless' if using chrome instead of firefox
-SELENIUM_BROWSER_EXECUTABLE_PATH = which('firefox')
-
-DOWNLOADER_MIDDLEWARES = {
-    'scrapy_selenium.SeleniumMiddleware': 800
-}
-
-# ?----------------------------------------------------------------------------
-
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
 
@@ -67,6 +53,39 @@ DOWNLOADER_MIDDLEWARES = {
 #DOWNLOADER_MIDDLEWARES = {
 #    'Cascavel.middlewares.CascavelDownloaderMiddleware': 543,
 #}
+
+# ? ---------------- Selenium settings - Configuração do Selenium -----------------
+# ? ---------------- Proxy settings - Configuração de proxy -----------------------
+# ? ---------------- User-agent settings - Configuração de User -------------------
+
+from shutil import which
+
+SELENIUM_DRIVER_NAME = 'firefox'
+SELENIUM_DRIVER_EXECUTABLE_PATH = which('geckodriver')
+SELENIUM_DRIVER_ARGUMENTS=['-headless']  # '--headless' if using chrome instead of firefox
+SELENIUM_BROWSER_EXECUTABLE_PATH = which('firefox')
+
+
+# random proxy activate
+PROXY_POOL_ENABLED = True
+
+# para permitir a troca por proxy
+RANDOM_UA_PER_PROXY = True
+
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy_selenium.SeleniumMiddleware': 500,
+
+    #configurando random-proxy
+    'scrapy_proxy_pool.middlewares.ProxyPoolMiddleware': 610,
+    'scrapy_proxy_pool.middlewares.BanDetectionMiddleware': 620,
+
+    # configurando user-agente random - user-agent-number > proxy [700 > 610 or 620]
+    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+    'scrapy_user_agents.middlewares.RandomUserAgentMiddleware': 700,
+}
+
+# ?----------------------------------------------------------------------------
+
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
