@@ -57,7 +57,6 @@ class CascavelPipeline:
             try:
                 item['bairro'] = item['bairro'].strip()
                 item['bairro'] = re.search(r'.* -', item['bairro']).group()
-                # item['bairro'] = item['bairro'].replace('\n', '')
                 item['bairro'] = item['bairro'].replace('-', '').strip()
             except:
                 item['bairro'] = None
@@ -89,7 +88,7 @@ class CascavelPipeline:
                 item['preco'] = item['preco'].strip()
                 item['preco'] = item['preco'].replace('.', '').replace(',', '.')
                 try:
-                    item['preco'] = float(re.search(r'[1-9](\d+)?(.\d+)?',  item['preco']).group())
+                    item['preco'] = float(re.search(r'[1-9](\d+)?(.\d+)?', item['preco']).group())
                 except:
                     item['preco'] = None
 
@@ -99,6 +98,62 @@ class CascavelPipeline:
 
             self.conn.execute(insert, item)
             self.conn.commit()
+            return item   
+
+
+        if spider.name == 'zap':
+            spider.log(f'####################### {spider.name} #######################')
+
+            try:
+                item['bairro'] = item['bairro'].strip()
+                item['bairro'] = re.search(r'- .*,', item['bairro']).group()
+                item['bairro'] = item['bairro'].replace('-', '')
+                item['bairro'] = item['bairro'].replace(',', '').strip()
+            except:
+                item['bairro'] = None
+
+
+            if item['garagem']:
+                item['garagem'] = item['garagem'].strip()
+                item['garagem'] = int(re.search(r'\d+', item['garagem']).group())
+            else:
+                item['garagem'] = None
+
+
+            if item['suites']:
+                item['suites'] = item['suites'].strip()
+                item['suites'] = int(re.search(r'\d+', item['suites']).group())
+
+
+            if item['quartos']:
+                item['quartos'] = item['quartos'].strip()
+                item['quartos'] = int(re.search(r'\d+', item['quartos']).group())
+
+
+            if item['metragem']:
+                item['metragem'] = item['metragem'].strip()
+                item['metragem'] = item['metragem'].replace(',', '.')
+                item['metragem'] = float(re.search(r'[1-9]\d+(.\d+)?', item['metragem']).group())
+
+
+            if item['banheiro']:
+                item['banheiro'] = item['banheiro'].strip()
+                item['banheiro'] = float(re.search(r'\d+', item['banheiro']).group())
+
+            if item['preco']:
+                item['preco'] = item['preco'].strip()
+                item['preco'] = item['preco'].replace('.', '').replace(',', '.')
+                try:
+                    item['preco'] = float(re.search(r'[1-9](\d+)?(.\d+)?',  item['preco']).group())
+                except:
+                    item['preco'] = None
+
+            # tables = 'cidade, bairro, comodos, garagem, suites, quartos, metragem, banheiro, preco'
+            # values = ':cidade, :bairro, :comodos, :garagem, :suites, :quartos, :metragem, :banheiro, :preco'
+            # insert = f'insert into imobiliaria({tables}) values ({values})'
+
+            # self.conn.execute(insert, item)
+            # self.conn.commit()
             return item   
 
     def create_table(self):
