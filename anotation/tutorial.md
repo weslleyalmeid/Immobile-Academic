@@ -383,3 +383,36 @@ from scrapy_selenium import SeleniumRequest
 
     User-agent: Fetch [para o bot fetch]
     Disallow: /private.html [bloquear página específica]
+
+#### Configurando plugin user-agent random
+[scrapy-user-agents](https://pypi.org/project/scrapy-user-agents/)
+
+Primeiro é necessário instalar 
+~~~shell
+    pip install scrapy-user-agents
+~~~
+
+e para configurar basta colocar este comando no arquivo settings.py
+~~~py
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+    'scrapy_user_agents.middlewares.RandomUserAgentMiddleware': 400,
+}
+~~~
+
+#### Configurando plugin proxy random
+[scrapy_proxy_pool](https://github.com/hyan15/scrapy-proxy-pool)
+
+Primeiro é necessário instalar 
+~~~shell
+    pip install scrapy_proxy_pool
+~~~
+
+e para configurar basta colocar este comando no arquivo settings.py
+~~~py
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy_proxy_pool.middlewares.ProxyPoolMiddleware': 610,
+    'scrapy_proxy_pool.middlewares.BanDetectionMiddleware': 620,
+}
+~~~
+obs.: Número dos middlewares devem ser inferiores ao do *RandomUserAgentMiddleware*
