@@ -149,13 +149,13 @@ exemplo básico de funcionamento:
 scrapy shell
 ~~~
 
-~~~shell
+~~~py
 url='http://imobiliariabelamorada.com.br/filtro/locacao/ \
     apartamentos/pato-branco-pr/?busca=1'
 ~~~
  
 **Passando form**
-~~~shell
+~~~py
 formdata={
     'cat1': '2.locacao', 
     'cat3': '4.apartamentos', 
@@ -165,7 +165,8 @@ formdata={
     } 
 ~~~
 
-~~~shell
+~~~py
+from scrapy.http import FormRequest
 fetch(scrapy.FormRequest(url, formdata=formdata, method='POST'))
 ~~~
 
