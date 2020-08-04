@@ -1,5 +1,9 @@
+from selenium.webdriver.firefox.options import Options
 from scrapy_selenium import SeleniumRequest
+from selenium.webdriver import Firefox
+from scrapy.selector import Selector
 from urllib.parse import urljoin
+from time import sleep
 import scrapy
 
 
@@ -8,10 +12,15 @@ class ImovelwebSpider(scrapy.Spider):
     name = 'imovelweb'
     start_urls = ['https://www.imovelweb.com.br/apartamentos-aluguel-cascavel-pr.html']
 
+    def __init__(self):
+        options = Options()
+        options.headless = False
+        self.driver = Firefox(options= options)
 
     def start_requests(self):
         url = self.start_urls[0]
         yield SeleniumRequest(url=url, callback=self.parse, wait_time= 3)
+
 
     def parse(self, response):
         items = response.css('a.go-to-posting')
@@ -21,22 +30,28 @@ class ImovelwebSpider(scrapy.Spider):
             base_url = 'https://www.imovelweb.com.br/'
             url = urljoin(base_url, relative_url)
             self.log(url)
-            scrapy.Request(url= url, callback= self.parse_detail)
+            self.driver.get(url)
+            sleep(7)
+            response = Selector(text= self.driver.page_source.encode('utf-8'))
+            yield self.parse_detail(response)
             
 
     def parse_detail(self, response):
-        import ipdb; ipdb.set_trace()
+        
 
         cidade = 'Cascavel'
-        bairro = response.css('span.link::text').get()
+        bairro = response.css('.title-location > span::text').get()
         comodos = ''
-        garagem = response.css('li.js-parking-spaces span + span::text').get()
-        suites = ''
-        quartos = response.css('li.js-bedrooms span + span::text').get()
-        metragem = response.css('li.js-areas span + span::text').get()
-        banheiro = response.css('li.js-bathrooms span + span::text').get()
-        preco = response.css('li.price__item--main  strong::text').get()
-        # ipdb.set_trace()
+        garagem = response.xpath('//i[contains(@class, "icon-f-cochera")]/parent::li/b/text()').get()
+        suites = response.xpath('//i[contains(@class, "icon-f-toilete")]/parent::li/b/text()').get()
+        quartos = response.xpath('//i[contains(@class, "icon-f-dormitorio")]/parent::li/b/text()').get()
+        metragem = response.xpath('//i[contains(@class, "icon-f-scubierta")]/parent::li/b/text()').get()
+        if metragem is None:
+            metragem = response.xpath('//i[contains(@class, "icon-f-stotal")]/parent::li/b/text()').get()
+        banheiro = response.xpath('//i[contains(@class, "icon-f-bano")]/parent::li/b/text()').get()
+        preco = response.xpath('//div[contains(text(), "Aluguel")]/following-sibling::div/span/text()').get()
+        
+        # import ipdb; ipdb.set_trace()
         yield {
             'cidade': cidade,
             'bairro': bairro,
