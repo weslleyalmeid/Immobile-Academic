@@ -1,10 +1,11 @@
 from selenium.webdriver.firefox.options import Options
 from scrapy_selenium import SeleniumRequest
-from selenium.webdriver import Firefox
+from selenium.webdriver import Firefox, Chrome
 from scrapy.selector import Selector
 from urllib.parse import urljoin
 from time import sleep
 import scrapy
+
 
 
 
@@ -15,7 +16,10 @@ class ImovelwebSpider(scrapy.Spider):
     def __init__(self):
         options = Options()
         options.headless = False
-        self.driver = Firefox(options= options)
+        # self.driver = Firefox(options= options)
+        options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        options.add_experimental_option('useAutomationExtension', False)
+        self.driver = Chrome(options)
 
     def start_requests(self):
         url = self.start_urls[0]

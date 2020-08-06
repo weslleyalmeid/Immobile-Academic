@@ -150,6 +150,57 @@ class CascavelPipeline:
             # self.conn.commit()
             return item
 
+        
+        if spider.name == 'porto':
+            spider.log(f'####################### {spider.name} #######################')
+
+            # try:
+            #     item['bairro'] = item['bairro'].strip()
+            #     item['bairro'] = re.search(r', .*,', item['bairro']).group()
+            #     item['bairro'] = item['bairro'].replace(',', '').strip()
+            # except:
+            #     item['bairro'] = None
+
+
+            # if item['garagem']:
+            #     item['garagem'] = int(item['garagem'])
+
+
+            # if item['suites']:
+            #     item['suites'] = int(item['suites'])
+
+
+            # if item['quartos']:
+            #     item['quartos'] = int(item['quartos'])
+
+
+            # if item['metragem']:
+            #     item['metragem'] = item['metragem'].strip()
+            #     item['metragem'] = item['metragem'].replace(',', '.')
+            #     item['metragem'] = float(re.search(r'[1-9]\d+(.\d+)?', item['metragem']).group())
+
+
+            # if item['banheiro']:
+            #     item['banheiro'] = int(item['banheiro'])
+            
+
+            # if item['preco']:
+            #     item['preco'] = item['preco'].strip()
+            #     item['preco'] = item['preco'].replace('.', '').replace(',', '.')
+            #     try:
+            #         item['preco'] = float(re.search(r'[1-9](\d+)?(.\d+)?',  item['preco']).group())
+            #     except:
+            #         item['preco'] = None
+
+            # tables = 'cidade, bairro, comodos, garagem, suites, quartos, metragem, banheiro, preco'
+            # values = ':cidade, :bairro, :comodos, :garagem, :suites, :quartos, :metragem, :banheiro, :preco'
+            # insert = f'insert into imobiliaria({tables}) values ({values})'
+
+            # self.conn.execute(insert, item)
+            # self.conn.commit()
+            return item
+
+
     def create_table(self):
         result = self.conn.execute(
             'select name from sqlite_master where type = "table" and name = "imobiliaria"'
