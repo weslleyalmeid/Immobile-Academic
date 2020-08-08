@@ -75,7 +75,7 @@ SELENIUM_BROWSER_EXECUTABLE_PATH = which('firefox')
 DOWNLOADER_MIDDLEWARES = {
     'scrapy_selenium.SeleniumMiddleware': 500,
 
-    #configurando random-proxy
+    # configurando random-proxy
     # 'scrapy_proxy_pool.middlewares.ProxyPoolMiddleware': 610,
     # 'scrapy_proxy_pool.middlewares.BanDetectionMiddleware': 620,
 
@@ -99,8 +99,6 @@ ITEM_PIPELINES = {
    'Cascavel.pipelines.CascavelPipeline': 300,
 }
 
-# Enable and configure the AutoThrottle extension (disabled by default)
-# See https://docs.scrapy.org/en/latest/topics/autothrottle.html
 #AUTOTHROTTLE_ENABLED = True
 # The initial download delay
 #AUTOTHROTTLE_START_DELAY = 5
