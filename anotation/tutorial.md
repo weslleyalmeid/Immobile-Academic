@@ -14,6 +14,7 @@ class BlogSpider(scrapy.Spider):
             yield {'title': title.css('a ::text').get()}
 
         for next_page in response.css('a.next-posts-link'):
+            # response.follow considera o endereço relativo
             yield response.follow(next_page, self.parse 
 ```
 para executar o código
@@ -42,8 +43,11 @@ para executar o código
     
     response.get()
     response.extract() 
-    response.extract_first() 
+    response.extract_first()
 
+obs.: Preencher com valor default caso valor não encontrado
+    response.get('default')
+    response.extract_first('default')
 #### Verificar o texto de uma pesquisa xpath
 
     response.xpath('tag/.text()').extract() ou .extract_first() 
@@ -191,6 +195,26 @@ Crawl
 ~~~shell
 scrapy crawl name-spider -s ROBOTSTXT_OBEY='False'
 ~~~
+
+#### Avanço de página - next_page
+~~~py
+        next_page = response.xpath('//a[@data-ix="passar-pagians"]/b/parent::a/following-sibling::a').get()
+        if next_page:
+            next_url = next_page.xpath('//a/@ref').get()
+            # se o href vier com url absoluto usar o scrapy.Request
+            yield scrapy.Request(url=next_url, callback=self.parse)
+            # se o href vier com url relativa usar o response.follow
+            yield response.follow(url=next_url, callback=self.parse)
+
+outra maneira de construir o url absoluto
+~~~py   
+        from urllib.parse import urljoin
+        relative_url = response.xpath('//a[@data-ix="passar-pagians"]/@href').get()
+        base_url = 'http://www.imobiliariagralhaazul.com.br'
+        absolute_url = urljoin(base_url, next_page)
+~~~
+
+
 
 #### Execuntando scrapy em html localhost
 
