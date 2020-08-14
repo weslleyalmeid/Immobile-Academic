@@ -1,3 +1,4 @@
+from urllib.parse import urljoin
 import scrapy
 
 
@@ -7,25 +8,39 @@ class PedrogranadoSpider(scrapy.Spider):
 
     def parse(self, response):
 
+        # self.log(response.url)
         items = response.css('a.btn-dark') 
         for item in items:
-            url = item.css('a::attr(href)').get()
-            self.log(url)
-            response.follow(, callback= self.parse_detail)
+            url_relative = item.css('a::attr(href)').get()
+            url_absolute = 'https://www.pedrogranado.com.br/'
+            url = urljoin(url_absolute, url_relative)
+            # self.log(url)
+            yield scrapy.Request(url= url, callback= self.parse_detail)
+
+        next_url = response.xpath('//a[@class= "page-link"] [contains(text(), "Próxima")]')
+        if next_url:
+            url_relative = next_url.xpath('./@href').get()
+            url_absolute = 'https://www.pedrogranado.com.br/'
+            page_url = urljoin(url_absolute, url_relative)
+            # import ipdb; ipdb.set_trace()
+            try:
+                yield scrapy.Request(url= page_url, callback= self.parse)
+            except:
+                pass
 
 
-    def parse_detail(response):
-
+    def parse_detail(self, response):
+        # import ipdb; ipdb.set_trace()
         cidade = 'Maringa'
-        # bairro = response.xpath('//h3/a [last()]/text()').get()
+        bairro = response.xpath('//h3/a [last()]/text()').get()
         comodos = ''
-        # garagem = response.css('i.fa-car + br + div::text').get()
-        # suites = response.css('i.fa-bath + br + span::text').get()
-        # quartos = response.css('i.fa-bed + br + div::text').get()
-        # metragem = response.xpath('//strong[contains(text(), "Área útil") or contains(text(), "Área construída")]/following-sibling::span/text()').get() 
-        # banheiro = response.css('i.fa-shower + br + div::text').get()
-        # preco = response.xpath('//strong[contains(text(), "Valor aluguel")]/following-sibling::span/text()').get()
-        
+        garagem = response.css('i.fa-car + br + div::text').get()
+        suites = response.css('i.fa-bath + br + span::text').get()
+        quartos = response.css('i.fa-bed + br + div::text').get()
+        metragem = response.xpath('//strong[contains(text(), "Área útil") or contains(text(), "Área construída")]/following-sibling::span/text()').get() 
+        banheiro = response.css('i.fa-shower + br + div::text').get()
+        preco = response.xpath('//strong[contains(text(), "Valor aluguel")]/following-sibling::span/text()').get()
+        # import ipdb; ipdb.set_trace()
         yield {
             'cidade': cidade,
             'bairro': bairro,
