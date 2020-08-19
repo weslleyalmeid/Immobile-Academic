@@ -60,6 +60,58 @@ class MaringaPipeline:
             
             return item
 
+
+        if spider.name == 'lelo':
+
+            spider.log(f'####################### {spider.name} #######################')
+
+            try:
+                item['bairro'] = item['bairro'].strip()
+            except:
+                item['bairro'] = None
+               
+
+            if item['garagem']:
+                item['garagem'] = int(item['garagem'])
+
+
+            if item['suites']:
+                item['suites'] = int(item['suites'])
+
+            
+            if item['quartos']:
+                item['quartos'] = int(item['quartos'])
+
+
+            if item['metragem']:
+                try:
+                    item['metragem'] = re.search(r'\d+ m² de área (útil|privativa)', item['metragem']).group()
+                    item['metragem'] = item['metragem'].replace(',', '.')
+                    item['metragem'] = re.search(r'[1-9]\d*(.\d+)?', item['metragem']).group()
+                    item['metragem'] = float(item['metragem'])
+                except:
+                    item['metragem'] = None
+
+
+            if item['banheiro']:
+                item['banheiro'] = int(item['banheiro'])
+            else:
+                item['banheiro'] = 1
+
+
+            if item['preco']:
+                item['preco'] = item['preco'].replace('.', '').replace(',', '.')
+                item['preco'] = float(re.search(r'[1-9](\d+)?(.\d+)?',  item['preco']).group())
+
+            # tables = 'cidade, bairro, comodos, garagem, suites, quartos, metragem, banheiro, preco'
+            # values = ':cidade, :bairro, :comodos, :garagem, :suites, :quartos, :metragem, :banheiro, :preco'
+            # insert = f'insert into imobiliaria({tables}) values ({values})'
+
+            # self.conn.execute(insert, item)
+            # self.conn.commit()
+            
+            return item
+
     def create_table(self):
         result = self.conn.execute(
             'select name from sqlite_master where type = "table" and name = "imobiliaria"'
